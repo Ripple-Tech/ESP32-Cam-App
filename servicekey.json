@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "espcam-439602",
+  "private_key_id": "a0f65144c591eeaad57e5cdaa682f7d12bd02e2a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDP6OixHaN90OBZ\nHTf6E25LYEfNH3sUZghHcODRToh4e2abeiaEuvMYrOT7YN9Bgsx0b+50C/buIsC+\nPBOIyAuq+mPnNk+OHFvYs2nKL9LsIZklDgM/pyDJl3qP4om4c3dojeL2SlodseTP\nGaOQZWUa69vi3QzqEpMXs3/ezaWr3tv0yZ9TEZtD/G+xtUFZxUWZMqzkcOzm6SjC\nBt9HEDZ9UX4g7hAdjmdE7e4qrno5NuWeGa6sJmPtLQcQ4Ax/C+/Zk08JZ6RJyD1D\nxfN+b9lDYSMPwVeccNswvX/9ff4NdleMvQYW3Zhx5c314wU84fWUvlcj6pQbwWE3\ney5QH0dRAgMBAAECggEALnS0r8S3YBjQ1GCwvg5i7fE+wfD3k7SDw5DPjz08xa0P\nHY0C99P9FyWkyZ2Y7R6wmBDdp2z3+ThnOGqck8rdPpBRy9tJFfA0vpxCNmUOvGf6\ne/rgU3QA4cKY5ncgPkiApSpVDSLKdYmnHnZ0Y4Kgf441lQC/DrtlRh274/kv/FG5\nx4owCJ3SqNPOU5mqvctuls2zq1cPp0vD1JEaxcMWUzmNXvK5ncDsG9JRIK6i+0Wx\nKdoBuCQcGd4YlPtW79VQJZALH5v3N8H29F6cgO3v9dFkq3GFH3C3iJLjS39HO7pG\n+Fbn8Uz/ddnepv++5CZXoHBmYWBNzxkb9+dTNZKaBQKBgQDvwLx1J5ySoOIMZEhj\nVnRx0yZ/g0V7lRC9LyW9B3WotTI1cmLotMTYM1WzyEAihlTH/F/pIZVJgXL5+Xq0\n8+qb5kaDKk/mTeDpUGx/kl1T/1RegTJK4TlXFZdHt67Fwb+ZQeoBkyQ0yT60Flvo\nmc1XsI3tlt5JCNl6yWslRZLl9QKBgQDd/8FIjoDOrGL0780gCKu/gO/KpCtVYKCy\n7cyifkvPRIeWd6PeKAVPVZd1sjNUZpFKG/Szpn8//5tT4OJpudiZcEdjCNDmYFVv\nCGsUxIZo5aRC7oWrZ/d3outO6Mqj1vYHUPwEM1xxQgmE/tyGmc1lK8FIhL7K/Ybn\nvIm3QQ0mbQKBgQCMXzk4ErgudXnELZbgaocE+c6pi89Luwww6ADdexedbnF2L4HP\no784ol3ERDOgwyuyZ4Y0NhB1GBCcYUBB4Cn1m06fj092lRRhJlBQJP71piHcryIm\nC1YKMb8AI4B1kqm+boQ25dKmAUnwIMMxHZPHiryeZd3BvyeuJ23PRbvrXQKBgQCj\nS7CSPXhUDgvQXeBF8vrap+464d2aNLSgSTlgQYRkFuWhcanRDSEyxSPfCFCngbbX\ni47I4uzxV4SbA22oFXNVEnkASQjYnP3a6ZdStGimGl1kem1KsvQeRXHPHn+IWuOo\naBKoyFr0WH4GHS57uACUrcXEIRjy2eB074Nhj/ErVQKBgFdCrN8/vPVHqqSvRori\nMm7uANp/0FvZJW1mN4EOjMzJkNArKEfXGw+cKLrWmuN0CajKmq6Gemx57GouIXtK\nDdE6R8cWdrLvTVzEyaGCYgN/YTOi5a+w8nV2llGjImTdeCxN3F8Sck+FFzHjUG66\nydI9q4MsHIHEjGJ4/jb7U2kL\n-----END PRIVATE KEY-----\n",
+  "client_email": "face-detection@espcam-439602.iam.gserviceaccount.com",
+  "client_id": "102302001747471060109",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/face-detection%40espcam-439602.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
