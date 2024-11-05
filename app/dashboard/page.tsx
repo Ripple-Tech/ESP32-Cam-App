@@ -77,40 +77,37 @@ const DriveImage: FC = async () => {
   }
   
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-
+  
+  async function getBase64Image(imageData: ArrayBuffer): Promise<string> {
+    const buffer = Buffer.from(imageData);
+    return `data:image/jpeg;base64,${buffer.toString("base64")}`;
+  }
+  
   const processedFiles = await Promise.all(
     files.map(async (file) => {
       if (file.webContentLink) {
         const response = await fetch(file.webContentLink);
         const imageData = await response.arrayBuffer();
-        const tempFilePath = await saveImageToTemp(imageData, `${file.id}.jpg`);
-
-        // Compare with each known image
+        const base64Image = await getBase64Image(imageData);
+  
+        // Display or compare the image directly as base64
         for (const knownImage of knownImages) {
-          
-          await delay(1000); // Delay of 1 second between each comparison request
-
-          const match = await compareFace(tempFilePath, knownImage.src);
+          const match = await compareFace(base64Image, knownImage.src);
           if (match) {
             console.log(`Match found for ${file.name} with ${knownImage.name}`);
-            toast.success(`Match found for ${file.name} with ${knownImage.name}`);
-        
-            //alert(`Match found for Google Drive image: ${file.name}`);
+            // Use react-hot-toast for notifications
           } else {
-            //alert(`No match found for Google Drive image: ${file.name}`);
-            toast.error(`No match found for ${file.name} with ${knownImage.name}`);
-         
             console.log(`Match not found for ${file.name} with ${knownImage.name}`);
           }
         }
-
-        return { ...file, tempFilePath };
+  
+        return { ...file, tempFilePath: base64Image }; // Use base64 for img src
       } else {
         return file;
       }
     })
   );
+  
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -151,4 +148,5 @@ const DriveImage: FC = async () => {
 };
 
 export default DriveImage;
+// http://localhost:3000  http://localhost
 // http://localhost:3000/auth/google/callback  http://localhost/auth/google/callback 
