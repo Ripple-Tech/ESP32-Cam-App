@@ -6,6 +6,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import Image from "next/image";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 interface FileProps {
   id: string;
@@ -93,9 +94,13 @@ const DriveImage: FC = async () => {
           const match = await compareFace(tempFilePath, knownImage.src);
           if (match) {
             console.log(`Match found for ${file.name} with ${knownImage.name}`);
+            toast.success(`Match found for ${file.name} with ${knownImage.name}`);
+        
             //alert(`Match found for Google Drive image: ${file.name}`);
           } else {
             //alert(`No match found for Google Drive image: ${file.name}`);
+            toast.error(`No match found for ${file.name} with ${knownImage.name}`);
+         
             console.log(`Match not found for ${file.name} with ${knownImage.name}`);
           }
         }
@@ -146,3 +151,4 @@ const DriveImage: FC = async () => {
 };
 
 export default DriveImage;
+// http://localhost:3000/auth/google/callback  http://localhost/auth/google/callback 
