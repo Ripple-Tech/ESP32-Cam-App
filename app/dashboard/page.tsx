@@ -77,9 +77,10 @@ const DriveImage: FC = async () => {
         for (const knownImage of knownImages) {
           const match = await compareFace(imageData, knownImage.src);
           if (match) {
-            toast.success(`Match found for ${file.name} with ${knownImage.name}`);
+            console.log(`Match found for ${file.name} with ${knownImage.name}`);
+            //toast.success(`Match found for ${file.name} with ${knownImage.name}`);
           } else {
-            toast.error(`No match for ${file.name} with ${knownImage.name}`);
+            console.log(`No match for ${file.name} with ${knownImage.name}`);
           }
         }
 
