@@ -16,8 +16,8 @@ interface FileProps {
   tempFilePath?: string;
 }
 
-const FACE_API_KEY = "Qn8oogSw-9iohUmz0i73Bc_IY1PIezYp";
-const FACE_API_SECRET = "J-TODW7FkMFfNxb0XHhzdZ5kkuOmr8qj";
+const FACE_API_KEY = `${process.env.FACE_API_KEY}` 
+const FACE_API_SECRET = `${process.env.FACE_API_SECRET}` ;
 const knownImages = [
   { src: "/assets/image1.jpg", name: "Image 1" },
   { src: "/assets/image2.jpg", name: "Image 2" },
