@@ -2,10 +2,8 @@ import { oauth2Client } from "@/utils/google-auth";
 import { cookies } from "next/headers";
 import { google } from "googleapis";
 import { FC } from "react";
-import { promises as fs } from "fs";
-import path from "path";
-import Image from "next/image";
 import axios from "axios";
+import Image from "next/image";
 import toast from "react-hot-toast";
 
 interface FileProps {
@@ -17,8 +15,8 @@ interface FileProps {
   tempFilePath?: string;
 }
 
-const FACE_API_KEY = `${process.env.FACE_API_KEY}` 
-const FACE_API_SECRET = `${process.env.FACE_API_SECRET}` ;
+const FACE_API_KEY = `${process.env.FACE_API_KEY}`;
+const FACE_API_SECRET = `${process.env.FACE_API_SECRET}`;
 const knownImages = [
   { src: "/assets/image1.jpg", name: "Image 1" },
   { src: "/assets/image2.jpg", name: "Image 2" },
@@ -47,67 +45,51 @@ const DriveImage: FC = async () => {
     return <div>Failed to fetch files</div>;
   }
 
-  async function saveImageToTemp(imageData: ArrayBuffer, filename: string): Promise<string> {
-    const tempDir = path.join(process.cwd(), "public", "temp");
-    await fs.mkdir(tempDir, { recursive: true });
-    const tempFilePath = path.join(tempDir, filename);
-    await fs.writeFile(tempFilePath, Buffer.from(imageData));
-    return `/temp/${filename}`; // Return relative path for public access
-  }
-  
-  async function compareFace(driveImageUrl: string, knownImagePath: string) {
+  async function compareFace(driveImageBuffer: ArrayBuffer, knownImagePath: string) {
+    const formData = new FormData();
+
+    const blob = new Blob([driveImageBuffer], { type: "image/jpeg" });
+    formData.append("api_key", FACE_API_KEY);
+    formData.append("api_secret", FACE_API_SECRET);
+    formData.append("image_file1", blob, "driveImage.jpg");
+
     const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
-    
+    formData.append("image_url2", knownImageUrl);
+
     try {
-      const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", null, {
-        params: {
-          api_key: FACE_API_KEY,
-          api_secret: FACE_API_SECRET,
-          image_url1: driveImageUrl, // Use the public Google Drive link directly
-          image_url2: knownImageUrl,  // Local image converted to public URL
-        },
+      const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-  
       const { confidence } = response.data;
-      return confidence > 70; // Adjust threshold as necessary
+      return confidence > 70;
     } catch (error) {
       console.error("Face comparison failed:", error);
       return false;
     }
   }
-  
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-  
-  async function getBase64Image(imageData: ArrayBuffer): Promise<string> {
-    const buffer = Buffer.from(imageData);
-    return `data:image/jpeg;base64,${buffer.toString("base64")}`;
-  }
-  
+
   const processedFiles = await Promise.all(
     files.map(async (file) => {
       if (file.webContentLink) {
         const response = await fetch(file.webContentLink);
         const imageData = await response.arrayBuffer();
-        const base64Image = await getBase64Image(imageData);
-  
-        // Display or compare the image directly as base64
+
         for (const knownImage of knownImages) {
-          const match = await compareFace(base64Image, knownImage.src);
+          const match = await compareFace(imageData, knownImage.src);
           if (match) {
-            console.log(`Match found for ${file.name} with ${knownImage.name}`);
-            // Use react-hot-toast for notifications
+            toast.success(`Match found for ${file.name} with ${knownImage.name}`);
           } else {
-            console.log(`Match not found for ${file.name} with ${knownImage.name}`);
+            toast.error(`No match for ${file.name} with ${knownImage.name}`);
           }
         }
-  
-        return { ...file, tempFilePath: base64Image }; // Use base64 for img src
+
+        const base64Image = `data:image/jpeg;base64,${Buffer.from(imageData).toString("base64")}`;
+        return { ...file, tempFilePath: base64Image }; // Use base64 for <img> src
       } else {
         return file;
       }
     })
   );
-  
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -148,5 +130,7 @@ const DriveImage: FC = async () => {
 };
 
 export default DriveImage;
+
+
 // http://localhost:3000  http://localhost
 // http://localhost:3000/auth/google/callback  http://localhost/auth/google/callback 
