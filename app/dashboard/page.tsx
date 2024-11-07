@@ -47,6 +47,7 @@ const DriveImage: FC = async () => {
   }
 
   async function compareFace(driveFileId: string, knownImagePath: string) {
+<<<<<<< HEAD
     // Check if webContentLink exists before accessing it
     const driveFile = files.find((file) => file.id === driveFileId); // Find file by ID
     const driveImageUrl = driveFile?.webContentLink; // Use optional chaining
@@ -56,6 +57,9 @@ const DriveImage: FC = async () => {
       return false; // Handle case where webContentLink is missing
     }
 
+=======
+    const driveImageUrl = `${driveFileId}/view&authuser=0`;
+>>>>>>> 1956d5e9c45ac6d7afe5d5febed4a03abbd4ccf3
     const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
 
     try {
