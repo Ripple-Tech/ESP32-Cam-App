@@ -6,6 +6,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import Image from "next/image";
 import axios from "axios";
+import sharp from "sharp";
 
 interface FileProps {
   id: string;
@@ -20,8 +21,8 @@ const FACE_API_KEY = "Qn8oogSw-9iohUmz0i73Bc_IY1PIezYp";
 const FACE_API_SECRET = "J-TODW7FkMFfNxb0XHhzdZ5kkuOmr8qj";
 const knownImages = [
   { src: "/assets/image1.jpg", name: "Image 1" },
- // { src: "/assets/image2.jpg", name: "Image 2" },
-  //{ src: "/assets/image3.jpg", name: "Image 3" },
+  // { src: "/assets/image2.jpg", name: "Image 2" },
+  // { src: "/assets/image3.jpg", name: "Image 3" },
 ];
 
 const DriveImage: FC = async () => {
@@ -46,56 +47,56 @@ const DriveImage: FC = async () => {
     return <div>Failed to fetch files</div>;
   }
 
-  async function saveImageToTemp(imageData: ArrayBuffer, filename: string): Promise<string> {
+  async function compressAndSaveImage(imageData: ArrayBuffer, filename: string): Promise<string> {
     const tempDir = path.join(process.cwd(), "public", "temp");
     await fs.mkdir(tempDir, { recursive: true });
+    
     const tempFilePath = path.join(tempDir, filename);
-    await fs.writeFile(tempFilePath, Buffer.from(imageData));
+    const compressedImage = await sharp(Buffer.from(imageData))
+      .resize(800) // Resize to 800px width
+      .jpeg({ quality: 80 }) // Compress with 80% quality
+      .toBuffer();
+
+    await fs.writeFile(tempFilePath, compressedImage);
     return `/temp/${filename}`; // Return relative path for public access
   }
-  
+
   async function compareFace(driveImageUrl: string, knownImagePath: string) {
     const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
-    
+
     try {
       const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", null, {
         params: {
           api_key: FACE_API_KEY,
           api_secret: FACE_API_SECRET,
-          image_url1: driveImageUrl, // Use the public Google Drive link directly
-          image_url2: knownImageUrl,  // Local image converted to public URL
+          image_url1: driveImageUrl,
+          image_url2: knownImageUrl,
         },
       });
-  
+
       const { confidence } = response.data;
-      return confidence > 70; // Adjust threshold as necessary
+      return confidence > 70;
     } catch (error) {
       console.error("Face comparison failed:", error);
       return false;
     }
   }
-  
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const processedFiles = await Promise.all(
     files.map(async (file) => {
       if (file.webContentLink) {
         const response = await fetch(file.webContentLink);
         const imageData = await response.arrayBuffer();
-        const tempFilePath = await saveImageToTemp(imageData, `${file.id}.jpg`);
+        const tempFilePath = await compressAndSaveImage(imageData, `${file.id}.jpg`);
 
-        // Compare with each known image
         for (const knownImage of knownImages) {
-          
-          await delay(1000); // Delay of 1 second between each comparison request
-
+          await delay(1000);
           const match = await compareFace(tempFilePath, knownImage.src);
           if (match) {
             console.log(`Match found for ${file.name} with ${knownImage.name}`);
-            //alert(`Match found for Google Drive image: ${file.name}`);
           } else {
-            //alert(`No match found for Google Drive image: ${file.name}`);
             console.log(`Match not found for ${file.name} with ${knownImage.name}`);
           }
         }
