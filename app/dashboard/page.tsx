@@ -43,9 +43,10 @@ const DriveImage: FC = async () => {
     return <div>Failed to fetch files</div>;
   }
 
-  async function compareFace(driveImageUrl: string, knownImagePath: string) {
+  async function compareFace(driveFileId: string, knownImagePath: string) {
+    const driveImageUrl = `https://drive.usercontent.google.com/download?id=${driveFileId}`;
     const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
-
+  
     try {
       const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", null, {
         params: {
@@ -55,14 +56,15 @@ const DriveImage: FC = async () => {
           image_url2: knownImageUrl,
         },
       });
-
+  
       const { confidence } = response.data;
-      return confidence > 70;
+      return confidence > 70; // Adjust threshold as necessary
     } catch (error) {
       console.error("Face comparison failed:", error);
       return false;
     }
   }
+  
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
