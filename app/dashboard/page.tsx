@@ -2,11 +2,8 @@ import { oauth2Client } from "@/utils/google-auth";
 import { cookies } from "next/headers";
 import { google } from "googleapis";
 import { FC } from "react";
-import { promises as fs } from "fs";
-import path from "path";
 import Image from "next/image";
 import axios from "axios";
-import sharp from "sharp";
 
 interface FileProps {
   id: string;
@@ -14,7 +11,6 @@ interface FileProps {
   webViewLink: string;
   webContentLink?: string;
   mimeType: string;
-  tempFilePath?: string;
 }
 
 const FACE_API_KEY = "Qn8oogSw-9iohUmz0i73Bc_IY1PIezYp";
@@ -47,20 +43,6 @@ const DriveImage: FC = async () => {
     return <div>Failed to fetch files</div>;
   }
 
-  async function compressAndSaveImage(imageData: ArrayBuffer, filename: string): Promise<string> {
-    const tempDir = path.join(process.cwd(), "public", "temp");
-    await fs.mkdir(tempDir, { recursive: true });
-    
-    const tempFilePath = path.join(tempDir, filename);
-    const compressedImage = await sharp(Buffer.from(imageData))
-      .resize(800) // Resize to 800px width
-      .jpeg({ quality: 80 }) // Compress with 80% quality
-      .toBuffer();
-
-    await fs.writeFile(tempFilePath, compressedImage);
-    return `/temp/${filename}`; // Return relative path for public access
-  }
-
   async function compareFace(driveImageUrl: string, knownImagePath: string) {
     const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
 
@@ -87,21 +69,16 @@ const DriveImage: FC = async () => {
   const processedFiles = await Promise.all(
     files.map(async (file) => {
       if (file.webContentLink) {
-        const response = await fetch(file.webContentLink);
-        const imageData = await response.arrayBuffer();
-        const tempFilePath = await compressAndSaveImage(imageData, `${file.id}.jpg`);
-
         for (const knownImage of knownImages) {
           await delay(1000);
-          const match = await compareFace(tempFilePath, knownImage.src);
+          const match = await compareFace(file.webContentLink, knownImage.src);
           if (match) {
             console.log(`Match found for ${file.name} with ${knownImage.name}`);
           } else {
             console.log(`Match not found for ${file.name} with ${knownImage.name}`);
           }
         }
-
-        return { ...file, tempFilePath };
+        return file;
       } else {
         return file;
       }
@@ -118,7 +95,7 @@ const DriveImage: FC = async () => {
               <h2>{file.name}</h2>
               <a href={file.webViewLink} target="_blank" rel="noopener noreferrer">
                 <img
-                  src={file.tempFilePath || `https://drive.google.com/uc?export=view&id=${file.id}`}
+                  src={file.webContentLink || `https://drive.google.com/uc?export=view&id=${file.id}`}
                   alt={file.name}
                   width={200}
                   height={200}
