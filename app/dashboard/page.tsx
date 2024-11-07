@@ -1,3 +1,5 @@
+
+
 import { oauth2Client } from "@/utils/google-auth";
 import { cookies } from "next/headers";
 import { google } from "googleapis";
@@ -5,11 +7,12 @@ import { FC } from "react";
 import Image from "next/image";
 import axios from "axios";
 
+// Interface for FileProps with optional webContentLink
 interface FileProps {
   id: string;
   name: string;
   webViewLink: string;
-  webContentLink?: string;
+  webContentLink?: string; // Optional property
   mimeType: string;
 }
 
@@ -44,9 +47,17 @@ const DriveImage: FC = async () => {
   }
 
   async function compareFace(driveFileId: string, knownImagePath: string) {
-    const driveImageUrl = `https://drive.usercontent.google.com/download?id=${driveFileId}`;
+    // Check if webContentLink exists before accessing it
+    const driveFile = files.find((file) => file.id === driveFileId); // Find file by ID
+    const driveImageUrl = driveFile?.webContentLink; // Use optional chaining
+
+    if (!driveImageUrl) {
+      console.error(`File with ID ${driveFileId} does not have a webContentLink`);
+      return false; // Handle case where webContentLink is missing
+    }
+
     const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
-  
+
     try {
       const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", null, {
         params: {
@@ -56,7 +67,7 @@ const DriveImage: FC = async () => {
           image_url2: knownImageUrl,
         },
       });
-  
+
       const { confidence } = response.data;
       return confidence > 70; // Adjust threshold as necessary
     } catch (error) {
@@ -64,7 +75,6 @@ const DriveImage: FC = async () => {
       return false;
     }
   }
-  
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -73,7 +83,7 @@ const DriveImage: FC = async () => {
       if (file.webContentLink) {
         for (const knownImage of knownImages) {
           await delay(1000);
-          const match = await compareFace(file.webContentLink, knownImage.src);
+          const match = await compareFace(file.id, knownImage.src);
           if (match) {
             console.log(`Match found for ${file.name} with ${knownImage.name}`);
           } else {
