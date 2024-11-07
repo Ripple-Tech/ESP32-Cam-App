@@ -44,7 +44,7 @@ const DriveImage: FC = async () => {
   }
 
   async function compareFace(driveFileId: string, knownImagePath: string) {
-    const driveImageUrl = `${driveFileId}/view`;
+    const driveImageUrl = `${driveFileId}/view&authuser=0`;
     const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
   
     try {
