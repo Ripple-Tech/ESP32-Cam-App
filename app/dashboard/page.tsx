@@ -47,33 +47,50 @@ const DriveImage: FC = async () => {
   }
 
   async function compareFace(driveFileId: string, knownImagePath: string) {
-  const driveFile = files.find((file) => file.id === driveFileId);
-  const driveImageUrl = driveFile?.webContentLink;
 
-  if (!driveImageUrl) {
-    console.error(`File with ID ${driveFileId} does not have a webContentLink`);
-    return false;
-  }
+    const driveImageUrl = https://firebasestorage.googleapis.com/v0/b/copper-6b102.appspot.com/o/profile_images%2F1721912152303-Screenshot_20240714-153643.jpg?alt=media&token=a7b10a03-bb9d-4c21-a7fa-95a187e82c24;
 
-  const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
+    const knownImageUrl = https://firebasestorage.googleapis.com/v0/b/copper-6b102.appspot.com/o/profile_images%2F1721912152303-Screenshot_20240714-153643.jpg?alt=media&token=a7b10a03-bb9d-4c21-a7fa-95a187e82c24;
 
-  try {
-    const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", null, {
-      params: {
-        api_key: FACE_API_KEY,
-        api_secret: FACE_API_SECRET,
-        image_url1: driveImageUrl,
-        image_url2: knownImageUrl,
-      },
-    });
+  
 
-    const { confidence } = response.data;
-    return confidence > 70; // Adjust threshold as necessary
-  } catch (error) {
-    console.error("Face comparison failed:", error.response?.data); // Access detailed error information
-    return false;
-  }
-}
+    try {
+
+      const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", null, {
+
+        params: {
+
+          api_key: FACE_API_KEY,
+
+          api_secret: FACE_API_SECRET,
+
+          image_url1: driveImageUrl,
+
+          image_url2: knownImageUrl,
+
+        },
+
+      });
+
+  
+
+      const { confidence } = response.data;
+
+      return confidence > 70; // Adjust threshold as necessary
+
+    } catch (error) {
+
+      console.error("Face comparison failed:", error);
+
+      return false;
+
+    }
+
+  }
+
+  
+
+
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
