@@ -2,9 +2,10 @@ import { oauth2Client } from "@/utils/google-auth";
 import { cookies } from "next/headers";
 import { google } from "googleapis";
 import { FC } from "react";
-import axios from "axios";
+import { promises as fs } from "fs";
+import path from "path";
 import Image from "next/image";
-import toast from "react-hot-toast";
+import axios from "axios";
 
 interface FileProps {
   id: string;
@@ -15,12 +16,12 @@ interface FileProps {
   tempFilePath?: string;
 }
 
-const FACE_API_KEY = `${process.env.FACE_API_KEY}`;
-const FACE_API_SECRET = `${process.env.FACE_API_SECRET}`;
+const FACE_API_KEY = "Qn8oogSw-9iohUmz0i73Bc_IY1PIezYp";
+const FACE_API_SECRET = "J-TODW7FkMFfNxb0XHhzdZ5kkuOmr8qj";
 const knownImages = [
   { src: "/assets/image1.jpg", name: "Image 1" },
-  { src: "/assets/image2.jpg", name: "Image 2" },
-  { src: "/assets/image3.jpg", name: "Image 3" },
+ // { src: "/assets/image2.jpg", name: "Image 2" },
+  //{ src: "/assets/image3.jpg", name: "Image 3" },
 ];
 
 const DriveImage: FC = async () => {
@@ -45,46 +46,61 @@ const DriveImage: FC = async () => {
     return <div>Failed to fetch files</div>;
   }
 
-  async function compareFace(driveImageBuffer: ArrayBuffer, knownImagePath: string) {
-    const formData = new FormData();
-
-    const blob = new Blob([driveImageBuffer], { type: "image/jpeg" });
-    formData.append("api_key", FACE_API_KEY);
-    formData.append("api_secret", FACE_API_SECRET);
-    formData.append("image_file1", blob, "driveImage.jpg");
-
+  async function saveImageToTemp(imageData: ArrayBuffer, filename: string): Promise<string> {
+    const tempDir = path.join(process.cwd(), "public", "temp");
+    await fs.mkdir(tempDir, { recursive: true });
+    const tempFilePath = path.join(tempDir, filename);
+    await fs.writeFile(tempFilePath, Buffer.from(imageData));
+    return `/temp/${filename}`; // Return relative path for public access
+  }
+  
+  async function compareFace(driveImageUrl: string, knownImagePath: string) {
     const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
-    formData.append("image_url2", knownImageUrl);
-
+    
     try {
-      const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", null, {
+        params: {
+          api_key: FACE_API_KEY,
+          api_secret: FACE_API_SECRET,
+          image_url1: driveImageUrl, // Use the public Google Drive link directly
+          image_url2: knownImageUrl,  // Local image converted to public URL
+        },
       });
+  
       const { confidence } = response.data;
-      return confidence > 70;
+      return confidence > 70; // Adjust threshold as necessary
     } catch (error) {
       console.error("Face comparison failed:", error);
       return false;
     }
   }
+  
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 
   const processedFiles = await Promise.all(
     files.map(async (file) => {
       if (file.webContentLink) {
         const response = await fetch(file.webContentLink);
         const imageData = await response.arrayBuffer();
+        const tempFilePath = await saveImageToTemp(imageData, `${file.id}.jpg`);
 
+        // Compare with each known image
         for (const knownImage of knownImages) {
-          const match = await compareFace(imageData, knownImage.src);
+          
+          await delay(1000); // Delay of 1 second between each comparison request
+
+          const match = await compareFace(tempFilePath, knownImage.src);
           if (match) {
-            toast.success(`Match found for ${file.name} with ${knownImage.name}`);
+            console.log(`Match found for ${file.name} with ${knownImage.name}`);
+            //alert(`Match found for Google Drive image: ${file.name}`);
           } else {
-            toast.error(`No match for ${file.name} with ${knownImage.name}`);
+            //alert(`No match found for Google Drive image: ${file.name}`);
+            console.log(`Match not found for ${file.name} with ${knownImage.name}`);
           }
         }
 
-        const base64Image = `data:image/jpeg;base64,${Buffer.from(imageData).toString("base64")}`;
-        return { ...file, tempFilePath: base64Image }; // Use base64 for <img> src
+        return { ...file, tempFilePath };
       } else {
         return file;
       }
@@ -130,7 +146,3 @@ const DriveImage: FC = async () => {
 };
 
 export default DriveImage;
-
-
-// http://localhost:3000  http://localhost
-// http://localhost:3000/auth/google/callback  http://localhost/auth/google/callback 
