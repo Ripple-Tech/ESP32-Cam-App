@@ -44,7 +44,7 @@ const DriveImage: FC = async () => {
   }
 
   async function compareFace(driveFileId: string, knownImagePath: string) {
-    const driveImageUrl = `https://drive.usercontent.google.com/download?id=${driveFileId}`;
+    const driveImageUrl = `https://drive.usercontent.google.com/download?id=${driveFileId}/view`;
     const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
   
     try {
