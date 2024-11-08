@@ -47,49 +47,34 @@ const DriveImage: FC = async () => {
   }
 
   async function compareFace(driveFileId: string, knownImagePath: string) {
+    // Check if webContentLink exists before accessing it
+    const driveFile = files.find((file) => file.id === driveFileId); // Find file by ID
+    const driveImageUrl = driveFile?.webContentLink; // Use optional chaining
 
-    const driveImageUrl = "https://lh3.googleusercontent.com/a/ACg8ocKWvT0vfCnLAVqJoOYWIz43ZSTGzB-ERTbc6oPOfk8ol1hscXDW=s96-c";
-    
-    const knownImageUrl = "https://lh3.googleusercontent.com/a/ACg8ocJoZ59XMSvUS4epWgKi2uSIiABK2LxcA16-J0UPgp6XUtiYmw=s96-c";
-  
+    if (!driveImageUrl) {
+      console.error(`File with ID ${driveFileId} does not have a webContentLink`);
+      return false; // Handle case where webContentLink is missing
+    }
 
-    try {
+    const knownImageUrl = `${process.env.BASE_URL}${knownImagePath}`;
 
-      const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", null, {
+    try {
+      const response = await axios.post("https://api-us.faceplusplus.com/facepp/v3/compare", null, {
+        params: {
+          api_key: FACE_API_KEY,
+          api_secret: FACE_API_SECRET,
+          image_url1: driveImageUrl,
+          image_url2: knownImageUrl,
+        },
+      });
 
-        params: {
-
-          api_key: FACE_API_KEY,
-
-          api_secret: FACE_API_SECRET,
-
-          image_url1: driveImageUrl,
-
-          image_url2: knownImageUrl,
-
-        },
-
-      });
-
-  
-
-      const { confidence } = response.data;
-
-      return confidence > 70; // Adjust threshold as necessary
-
-    } catch (error) {
-
-      console.error("Face comparison failed:", error);
-
-      return false;
-
-    }
-
-  }
-
-  
-
-
+      const { confidence } = response.data;
+      return confidence > 70; // Adjust threshold as necessary
+    } catch (error) {
+      console.error("Face comparison failed:", error);
+      return false;
+    }
+  }
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
