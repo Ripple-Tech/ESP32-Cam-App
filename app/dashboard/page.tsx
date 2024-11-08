@@ -50,7 +50,7 @@ const DriveImage: FC = async () => {
 
     const driveImageUrl = "https://lh3.googleusercontent.com/a/ACg8ocKWvT0vfCnLAVqJoOYWIz43ZSTGzB-ERTbc6oPOfk8ol1hscXDW=s96-c";
     
-    const knownImageUrl = "https://lh3.googleusercontent.com/a/ACg8ocKWvT0vfCnLAVqJoOYWIz43ZSTGzB-ERTbc6oPOfk8ol1hscXDW=s96-c";
+    const knownImageUrl = "https://lh3.googleusercontent.com/a/ACg8ocJoZ59XMSvUS4epWgKi2uSIiABK2LxcA16-J0UPgp6XUtiYmw=s96-c";
   
 
     try {
