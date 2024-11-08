@@ -48,8 +48,8 @@ const DriveImage: FC = async () => {
 
   async function compareFace(driveFileId: string, knownImagePath: string) {
     // Check if webContentLink exists before accessing it
-    const driveFile = files.find((file) => file.id === driveFileId); // Find file by ID
-    const driveImageUrl = driveFile?.webContentLink; // Use optional chaining
+    const driveFile = "https://esp32camapp.vercel.app/assets/image1.jpg"
+    const driveImageUrl = "https://esp32camapp.vercel.app/assets/image1.jpg"
 
     if (!driveImageUrl) {
       console.error(`File with ID ${driveFileId} does not have a webContentLink`);
