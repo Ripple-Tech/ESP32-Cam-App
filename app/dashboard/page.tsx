@@ -48,10 +48,9 @@ const DriveImage: FC = async () => {
 
   async function compareFace(driveFileId: string, knownImagePath: string) {
 
-    const driveImageUrl = https://firebasestorage.googleapis.com/v0/b/copper-6b102.appspot.com/o/profile_images%2F1721912152303-Screenshot_20240714-153643.jpg?alt=media&token=a7b10a03-bb9d-4c21-a7fa-95a187e82c24;
-
-    const knownImageUrl = https://firebasestorage.googleapis.com/v0/b/copper-6b102.appspot.com/o/profile_images%2F1721912152303-Screenshot_20240714-153643.jpg?alt=media&token=a7b10a03-bb9d-4c21-a7fa-95a187e82c24;
-
+    const driveImageUrl = https://lh3.googleusercontent.com/a/ACg8ocIe9GQpJ5XfN8oq89KU8mk_CHFKNP_7uw6I-0RQnn1Ueb-C-xLV=s96-c
+    
+    const knownImageUrl =https://lh3.googleusercontent.com/a/ACg8ocIe9GQpJ5XfN8oq89KU8mk_CHFKNP_7uw6I-0RQnn1Ueb-C-xLV=s96-c
   
 
     try {
