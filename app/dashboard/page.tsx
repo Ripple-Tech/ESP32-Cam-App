@@ -48,9 +48,9 @@ const DriveImage: FC = async () => {
 
   async function compareFace(driveFileId: string, knownImagePath: string) {
 
-    const driveImageUrl = https://lh3.googleusercontent.com/a/ACg8ocIe9GQpJ5XfN8oq89KU8mk_CHFKNP_7uw6I-0RQnn1Ueb-C-xLV=s96-c;
+    const driveImageUrl = "https://lh3.googleusercontent.com/a/ACg8ocIe9GQpJ5XfN8oq89KU8mk_CHFKNP_7uw6I-0RQnn1Ueb-C-xLV=s96-c";
     
-    const knownImageUrl =https://lh3.googleusercontent.com/a/ACg8ocIe9GQpJ5XfN8oq89KU8mk_CHFKNP_7uw6I-0RQnn1Ueb-C-xLV=s96-c;
+    const knownImageUrl = "https://lh3.googleusercontent.com/a/ACg8ocIe9GQpJ5XfN8oq89KU8mk_CHFKNP_7uw6I-0RQnn1Ueb-C-xLV=s96-c";
   
 
     try {
